@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/go-chi/chi/middleware"
-	"todo"
+	"github.com/miguelmcell/Pre-merge-Gating-JenkinsX/app/backend/src/todo"
 )
 
 func Routes() *chi.Mux {
