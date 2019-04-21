@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"net/http"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -19,7 +20,7 @@ func Routes() *chi.Mux {
 		middleware.Recoverer,
 	)
 	router.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/todo", todo.Routes())
+		r.Mount("/api", todo.Routes())
 	})
 	return router
 }
@@ -34,5 +35,5 @@ func main() {
 	if err := chi.Walk(router, walkFunc); err != nil {
 		log.Panicf("Logging err %s\n", err.Error())
 	}
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("SERVERPORT"), router))
 }

@@ -1,0 +1,11 @@
+{
+"name": "htmlRender",
+"version": "1.0.0",
+"description": "",
+"keywords": [],
+"author": "",
+"license": "ISC",
+"dependencies": {
+"express": "^4.16.4"
+}
+}

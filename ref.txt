@@ -1,0 +1,11 @@
+$(sudo minikube service hello-minikube --url)
+hello-minikube is deployment name
+
+kubectl describe services example-service
+sudo kubectl port-forward --namespace kube-system $(sudo kubectl get po -n kube-system | grep kube-registry-v0 | \awk '{print $1;}') 5000:5000
+sudo minikube service list
+sudo kubectl run backend --image=localhost:5000/backend
+kubectl create -f kube-registry.yaml
+                                               URL given by minikube service list
+sudo ssh -v -i ~/.ssh/id_rsa -N -L 0.0.0.0:80:192.168.99.100:31462 ${USER}@$(hostname)
+sqlcmd -S 192.168.99.100,32291 -U SA -P '<YourStrong!Passw0rd>'
