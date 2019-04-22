@@ -9,3 +9,4 @@ kubectl create -f kube-registry.yaml
                                                URL given by minikube service list
 sudo ssh -v -i ~/.ssh/id_rsa -N -L 0.0.0.0:80:192.168.99.100:31462 ${USER}@$(hostname)
 sqlcmd -S 192.168.99.100,32291 -U SA -P '<YourStrong!Passw0rd>'
+kubectl expose deployments --port=80 --target-port=5000 --type=LoadBalancer greetings-deployment

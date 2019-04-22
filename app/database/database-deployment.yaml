@@ -22,3 +22,20 @@ spec:
            value: "Y"
          - name: MSSQL_SA_PASSWORD
            value: "<YourStrong!Passw0rd>"
+         volumeMounts:
+         - name: mssql-base-volume
+           mountPath: /data/mssql/
+         - name: mssql-ldf-volume
+           mountPath: /data/mssql/ldf
+         - name: mssql-mdf-volume
+           mountPath: /data/mssql/mdf
+      volumes:
+      - name: mssql-base-volume
+        persistentVolumeClaim:
+          claimName: mssql-base-volume
+      - name: mssql-mdf-volume
+        persistentVolumeClaim:
+          claimName: mssql-mdf-volume
+      - name: mssql-ldf-volume
+        persistentVolumeClaim:
+          claimName: mssql-ldf-volume		

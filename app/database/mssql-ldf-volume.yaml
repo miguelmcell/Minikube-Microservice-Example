@@ -1,0 +1,13 @@
+#mssql logs volume claim: mssql-ldf-volume.yaml	  
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mssql-ldf-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  storageClassName: standard
+  hostPath:
+    path: /data/mssql/ldf/
