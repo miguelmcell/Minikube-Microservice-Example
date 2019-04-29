@@ -1,0 +1,20 @@
+Starting from a clean minikube instance
+
+start docker registry operator to initialize image registry
+start port forwarding port 5000 from localhost to that registry in the background
+
+(optional) build docker images for deployments
+tag all images and push to registry
+
+create persistent volumes for database and claim them for database
+create database deployment
+
+create backend deployment with the correct database ip
+
+create frontend deployment and make sure it connects to backend to make post/get requests
+
+use ssh command to be able to access frontend on local ip address of host
+
+
+NOW USING HEADLESS SERVICE FOR MY MONGODB
+UTILIZED DNS NAME INSTEAD OF IP which is unlike nodeport or loadbalancer

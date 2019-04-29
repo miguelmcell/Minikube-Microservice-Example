@@ -2,16 +2,18 @@ package main
 
 import (
 	"log"
+	"context"
 	"os"
+	"strings"
 	"fmt"
+	"strconv"
 	"net/http"
-	"net/url"
-	"database/sql"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/go-chi/chi/middleware"
-	_ "github.com/denisenkom/go-mssqldb"
-	//"github.com/miguelmcell/Pre-merge-Gating-JenkinsX/app/backend/src/todo"
+	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Player struct {
@@ -29,56 +31,140 @@ func Routes() *chi.Mux {
 		middleware.RedirectSlashes,
 		middleware.Recoverer,
 	)
-	router.Get("/api", getPlayers)
-	//router.Route("/v1", func(r chi.Router) {
-	//	r.Mount("/api", todo.Routes())
-	//})
+	router.Get("/getPlayers", getPlayers)
+	router.Post("/postPlayer/{player}", postPlayer)
+	router.Post("/deletePlayer/{name}", deletePlayer)
 	return router
 }
 
+func deletePlayer(w http.ResponseWriter, r *http.Request) {
+	name := chi.URLParam(r,"name")
+	filter := bson.D{{"name", name}}
+	clientOptions := options.Client().ApplyURI("mongodb://main_admin:Janeth1998@mongodb-service.default.svc.cluster.local:27017/admin")
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+
+        if err != nil {
+                log.Fatal(err)
+        }
+
+        // Check the connection
+        err = client.Ping(context.TODO(), nil)
+
+        if err != nil {
+         log.Fatal(err)
+        }
+
+        fmt.Println("Connected to MongoDB!")
+
+        collection := client.Database("test").Collection("Players")
+
+        if err != nil {
+            log.Fatal(err)
+        }
+	deleteResult, err := collection.DeleteMany(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	render.JSON(w, r, deleteResult)
+
+}
+
+func postPlayer(w http.ResponseWriter, r *http.Request) {
+	// Add new player to leaderboard
+	player := chi.URLParam(r, "player")
+	//ex: migs,100
+	s := strings.Split(player, ",")
+	name, sc := s[0], s[1]
+	score, err := strconv.Atoi(sc)
+	if err != nil {
+	        // handle error
+		fmt.Println(err)
+		os.Exit(2)
+	}
+	clientOptions := options.Client().ApplyURI("mongodb://main_admin:Janeth1998@mongodb-service.default.svc.cluster.local:27017/admin")
+	newPlayer := Player{
+		Score: score,
+		Name: name,
+	}
+	// Connect to MongoDB
+        client, err := mongo.Connect(context.TODO(), clientOptions)
+
+        if err != nil {
+		log.Fatal(err)
+        }
+
+        // Check the connection
+        err = client.Ping(context.TODO(), nil)
+
+        if err != nil {
+         log.Fatal(err)
+        }
+
+        fmt.Println("Connected to MongoDB!")
+
+	collection := client.Database("test").Collection("Players")
+
+        if err != nil {
+            log.Fatal(err)
+        }
+	insertResult, err := collection.InsertOne(context.TODO(), newPlayer)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(insertResult.InsertedID)
+	render.JSON(w, r, newPlayer)
+}
+
 func getPlayers(w http.ResponseWriter, r *http.Request) {
-	var score int
+	clientOptions := options.Client().ApplyURI("mongodb://main_admin:Janeth1998@mongodb-service.default.svc.cluster.local:27017/admin")
 
-	query := url.Values{}
-	query.Add("app name", "MyAppName")
+	// Connect to MongoDB
+	client, err := mongo.Connect(context.TODO(), clientOptions)
 
-	 u := &url.URL{
-	     Scheme:   "sqlserver",
-	      User:     url.UserPassword(os.Getenv("DBUSER"), os.Getenv("DBPASS")),
-	      Host:     fmt.Sprintf("%s:%d",os.Getenv("DBIP"), 32291),
-	     // Path:  instance, // if connecting to an instance instead of a port
-	    RawQuery: query.Encode(),
-	}
-	db, err := sql.Open("sqlserver", u.String())
-
-	//db, err := sql.Open("mysql", "SA:<YourStrong!Passw0rd>@tcp(192.168.99.100:32291)/master")
 	if err != nil {
-		panic(err)
+	log.Fatal(err)
 	}
-	rows, err := db.Query("select score from Players")
+
+	// Check the connection
+	err = client.Ping(context.TODO(), nil)
+
 	if err != nil {
+	 log.Fatal(err)
+	}
+
+	fmt.Println("Connected to MongoDB!")
+
+	collection := client.Database("test").Collection("Players")
+
+	if err != nil {
+	    log.Fatal(err)
+	}
+
+	var result []*Player
+	options := options.FindOptions{}
+	options.Sort = bson.D{{"score", -1}}
+	limit := int64(5)
+	options.Limit = &limit
+	cur, err := collection.Find(context.TODO(), bson.D{}, &options)
+	if err != nil {
+	   log.Fatal(err)
+	}
+	for cur.Next(context.TODO()) {
+	  var elem Player
+	  err := cur.Decode(&elem)
+	  if err != nil {
+	        log.Fatal(err)
+	  }
+
+	  result = append(result, &elem)
+	}
+	if err := cur.Err(); err != nil {
 		log.Fatal(err)
 	}
-	defer rows.Close()
-	for rows.Next() {
-		err := rows.Scan(&score)
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Println(score)
+	for _, play := range result{
+		fmt.Printf("%d\n",play.Score)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	players := []Player{
-		{
-			Score: score,
-			Name: "Migs",
-		},
-	}
-	render.JSON(w, r, players)
+	render.JSON(w, r, result)
 }
 func main() {
 	router := Routes()

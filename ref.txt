@@ -9,4 +9,23 @@ kubectl create -f kube-registry.yaml
                                                URL given by minikube service list
 sudo ssh -v -i ~/.ssh/id_rsa -N -L 0.0.0.0:80:192.168.99.100:31462 ${USER}@$(hostname)
 sqlcmd -S 192.168.99.100,32291 -U SA -P '<YourStrong!Passw0rd>'
+sudo kubectl patch pvc database-volume -p '{"metadata":{"finalizers":null}}'
+
+$(minikube service hello-minikube --url)
+
+# initializes a mongodb
+sudo kubectl exec mongod-0 -c mongod-container -- mongo --eval 'rs.initiate({_id: "MainRepSet", version: 1, members: [ {_id: 0, host: "mongod-0.mongodb-service.default.svc.cluster.local:27017"}]});'
+
+sudo kubectl exec mongod-0 -c mongod-container -- mongo --eval 'db.getSiblingDB("admin").createUser({user:"main_admin",pwd:"'"password"'",roles:[{role:"root",db:"admin"}]});'
+
+kubectl exec -it mongod-0 -c mongod-container bash
+$ mongo
+> db.getSiblingDB('admin').auth("main_admin", "abc123");
+> use test;
+> db.testcoll.insert({a:1});
+> db.testcoll.insert({b:2});
+> db.testcoll.find();
+
+ mongodb://main_admin:Janeth1998@localhost:27017/admin
 kubectl expose deployments --port=80 --target-port=5000 --type=LoadBalancer greetings-deployment
+

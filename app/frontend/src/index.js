@@ -557,7 +557,6 @@
 
                 if (!collision) {
                     this.distanceRan += this.currentSpeed * deltaTime / this.msPerFrame;
-
                     if (this.currentSpeed < this.config.MAX_SPEED) {
                         this.currentSpeed += this.config.ACCELERATION;
                     }
@@ -582,7 +581,7 @@
                 } else {
                     var actualDistance =
                         this.distanceMeter.getActualDistance(Math.ceil(this.distanceRan));
-
+		    sessionStorage.score = actualDistance;
                     if (actualDistance > 0) {
                         this.invertTrigger = !(actualDistance %
                             this.config.INVERT_DISTANCE);
@@ -787,7 +786,7 @@
             } else {
                 this.gameOverPanel.draw();
             }
-
+	    
             // Update the high score.
             if (this.distanceRan > this.highestScore) {
                 this.highestScore = Math.ceil(this.distanceRan);

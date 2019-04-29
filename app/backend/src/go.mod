@@ -8,4 +8,8 @@ require (
 	github.com/go-chi/render v1.0.1
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/miguelmcell/Pre-merge-Gating-JenkinsX v0.0.0-20190414233803-70c6d3074c3d
+	github.com/mongodb/mongo-go-driver v1.0.1
+	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
+	github.com/xdg/stringprep v1.0.0 // indirect
+	go.mongodb.org/mongo-driver v1.0.1
 )

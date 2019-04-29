@@ -1,0 +1,24 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - image: mongo
+        name: mongodb
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - mountPath: /data/pv0001/
+          name: mongodata
+      restartPolicy: Always
+      volumes:
+      - name: mongodata
+        persistentVolumeClaim:
+          claimName: pvc0001

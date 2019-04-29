@@ -12,7 +12,7 @@
 
 <body id="t" class="offline">
     <div id="messageBox" class="sendmessage">
-         <h1 style="text-align: center;font-family: 'Open Sans', sans-serif;">Press Space to start</h1>
+         <h1 style="text-align: center;font-family: 'Open Sans', sans-serif;">Press Space/Touch to start</h1>
          <div class="niokbutton" onclick="okbuttonsend()"></div>
     </div>
     <div id="main-frame-error" class="interstitial-wrapper">
@@ -34,44 +34,19 @@
         </canvas>
     </div>
 </body>
-
+<script src="dino.js"></script>
 <script>
     document.onkeydown = function(evt) {
-    evt = evt || window.event;
-    if (evt.keyCode == 32) {
-        var box = document.getElementById("messageBox");
+      evt = evt || window.event;
+      if (evt.keyCode == 32) {
+          var box = document.getElementById("messageBox");
+          box.style.visibility="hidden";
+      }
+    };
+    function start(){
+    	var box = document.getElementById("messageBox");
         box.style.visibility="hidden";
     }
-};
+    document.addEventListener('touchstart', start, false);
 </script>
-<script>
-	var refreshInterval = 1000;
-	var curDistance = 0;
-	function init(){
-		var c = document.getElementById("myCanvas");
-		var context = c.getContext("2d");
-		context.beginPath();
-        	context.translate(0.5,0.5);
-        	context.moveTo(0, 30);
-        	context.lineTo(600, 30);
-		context.stroke();
-	
-		var img = new Image();
-		const DINOHEIGHT = 13;
-	 
-		img.onload = function () {
-   			 context.drawImage(img, 0, DINOHEIGHT,20,20);
-		}
-		img.src = "assets/trex.png";
-		//
-	}
-	function refresh(){
-		setTimeout("refresh()",refreshInterval);
-	}
-	init();
-	refresh();
-	//constantly change distance that is between 0-maxscore
-	//if player beats max score the other ones will get farther away
-	//**will first need to get highest score from database, and then the top 5 users to post in line
-</script>    
 </html>
