@@ -1,11 +1,13 @@
 {
-"name": "htmlRender",
-"version": "1.0.0",
-"description": "",
-"keywords": [],
-"author": "",
-"license": "ISC",
-"dependencies": {
-"express": "^4.16.4"
-}
+  "name": "htmlrender",
+  "version": "1.0.0",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "xmlhttprequest": "^1.8.0"
+  },
+  "main": "app.js",
+  "description": ""
 }
