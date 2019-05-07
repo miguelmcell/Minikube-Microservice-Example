@@ -15,6 +15,7 @@ create frontend deployment and make sure it connects to backend to make post/get
 
 use ssh command to be able to access frontend on local ip address of host
 
+AS LONG AS IM CONNECTED VIA VPN, RUN SSH THINGY TO SHOW DEMO
 
 NOW USING HEADLESS SERVICE FOR MY MONGODB
 UTILIZED DNS NAME INSTEAD OF IP which is unlike nodeport or loadbalancer

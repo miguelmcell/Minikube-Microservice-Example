@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -24,6 +25,15 @@ type Player struct {
 
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
+	cors := cors.New(cors.Options{
+	        AllowedOrigins:   []string{"*"},
+	        AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+	        AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+	        AllowCredentials: true,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+        })
+	router.Use(cors.Handler)
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON),
 		middleware.Logger,
@@ -34,7 +44,12 @@ func Routes() *chi.Mux {
 	router.Get("/getPlayers", getPlayers)
 	router.Post("/postPlayer/{player}", postPlayer)
 	router.Post("/deletePlayer/{name}", deletePlayer)
+	router.Get("/getStatus", getStatus)
 	return router
+}
+
+func getStatus(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("good"))
 }
 
 func deletePlayer(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +88,7 @@ func postPlayer(w http.ResponseWriter, r *http.Request) {
 	// Add new player to leaderboard
 	player := chi.URLParam(r, "player")
 	//ex: migs,100
-	s := strings.Split(player, ",")
+	s := strings.Split(player, "_")
 	name, sc := s[0], s[1]
 	score, err := strconv.Atoi(sc)
 	if err != nil {
@@ -114,6 +129,7 @@ func postPlayer(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(insertResult.InsertedID)
 	render.JSON(w, r, newPlayer)
 }
+
 
 func getPlayers(w http.ResponseWriter, r *http.Request) {
 	clientOptions := options.Client().ApplyURI("mongodb://main_admin:Janeth1998@mongodb-service.default.svc.cluster.local:27017/admin")

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Status</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap.css">
+  <script src="bootstrap.js"></script>
+</head>
+<body>
+  
+<div class="jumbotron text-center">
+  <h1>Microservice Status</h1>
+</div>
+
+<div class="container">
+  <div class="row text-center">
+    <div class="col-md-4">
+    	<h1>Backend <span class="label label-pill label-primary" id="backend"></span></h1>
+    </div>
+    <div class="col-md-4">
+      <h1>Frontend <span class="label label-pill label-primary"i id="frontend"></span></h1>
+    </div>
+    <div class="col-md-4">
+      <h1>Database <span class="label label-pill label-primary" id="database"></span></h1>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                        console.log(xhttp.responseText);
+			if(xhttp.responseText === 'success'){
+				document.getElementById("backend").innerHTML = "Online";
+        			document.getElementById("backend").classList.add('label-success');
+			}
+			else{
+				document.getElementById("backend").innerHTML = "Offline";
+                                document.getElementById("backend").classList.add('label-danger');
+			}
+                }
+        };
+        xhttp.open("GET", "/getBack", true);
+        xhttp.send();
+
+	var xhttp2 = new XMLHttpRequest();
+        xhttp2.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                        console.log(xhttp2.responseText);
+			if(xhttp2.responseText === 'success'){
+				console.log("actually passed");
+				document.getElementById("frontend").innerHTML = "Online";
+                                document.getElementById("frontend").classList.add('label-success');
+                        }
+                        else{
+				console.log("actually failed");
+				document.getElementById("frontend").innerHTML = "Offline";
+                                document.getElementById("frontend").classList.add('label-danger');
+                        }
+                }
+        };
+
+        xhttp2.open("GET", "/getFront", true);
+        xhttp2.send();
+	
+	var xhttp3 = new XMLHttpRequest();
+        xhttp3.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                        console.log(xhttp3.responseText);
+			if(xhttp3.responseText === 'success'){
+				document.getElementById("database").innerHTML = "Online";
+                                document.getElementById("database").classList.add('label-success');
+                        }
+                        else{
+				document.getElementById("database").innerHTML = "Offline";
+                                document.getElementById("database").classList.add('label-danger');
+                        }
+                }
+        };
+
+	xhttp3.open("GET", "/getDatabase", true);
+        xhttp3.send();
+</script>
+</html>
